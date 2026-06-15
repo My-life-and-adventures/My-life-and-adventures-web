@@ -1,0 +1,116 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  background: #f9fafb;
+  color: #111;
+}
+
+.app-main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.viewer-hero {
+  margin-bottom: 24px;
+}
+
+.viewer-hero h1 {
+  margin: 0 0 8px;
+  font-size: 1.75rem;
+}
+
+.viewer-subtitle {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.viewer-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+}
+
+.viewer-card h1,
+.viewer-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.125rem;
+}
+
+.viewer-card h1 {
+  font-size: 1.75rem;
+}
+
+.viewer-meta {
+  margin: 0 0 12px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.viewer-card video {
+  width: 100%;
+  border-radius: 8px;
+  background: #000;
+}
+
+.viewer-empty {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.viewer-notice {
+  margin: 0 0 16px;
+  color: #047857;
+}
+
+.viewer-error {
+  margin: 0 0 16px;
+  color: #b91c1c;
+}
+
+.viewer-card label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.viewer-card input[type='text'] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  font-size: 1.25rem;
+  letter-spacing: 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.viewer-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.viewer-actions button {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.viewer-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.viewer-btn-secondary {
+  background: #e5e7eb !important;
+  color: #111 !important;
+}
