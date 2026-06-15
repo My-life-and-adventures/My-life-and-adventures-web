@@ -1,4 +1,5 @@
 import { apiFetch } from './client';
+import { setSessionToken } from './session';
 import type { ViewerInvitePreview, ViewerProfile, ViewerStory } from './types';
 
 export function getInvitePreview(token: string) {
@@ -12,11 +13,18 @@ export function requestLoginCode(token: string) {
   });
 }
 
-export function verifyLoginCode(token: string, code: string) {
-  return apiFetch<{ verified: boolean; session_token: string }>('/viewer/verify-code', {
-    method: 'POST',
-    body: JSON.stringify({ token, code }),
-  });
+export async function verifyLoginCode(token: string, code: string) {
+  const result = await apiFetch<{ verified: boolean; session_token: string }>(
+    '/viewer/verify-code',
+    {
+      method: 'POST',
+      body: JSON.stringify({ token, code }),
+    },
+  );
+  if (result.session_token) {
+    setSessionToken(result.session_token);
+  }
+  return result;
 }
 
 export function getViewerMe() {

@@ -1,3 +1,4 @@
+import { getSessionToken } from './session';
 import type { ApiResponse } from './types';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
@@ -20,6 +21,11 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
 
   if (init.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
+  }
+
+  const sessionToken = getSessionToken();
+  if (sessionToken && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${sessionToken}`);
   }
 
   const res = await fetch(url, {
