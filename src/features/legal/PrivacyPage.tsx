@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import './legal.css';
 
-const CONTACT_EMAIL = 'privacy@educonsellium.com';
+const CONTACT_EMAIL = 'support@mylife-and-adventures.com';
 
 export function PrivacyPage() {
   useEffect(() => {
@@ -19,17 +19,11 @@ export function PrivacyPage() {
 
       <div className="legal-card">
         <p className="legal-intro">
-          This Privacy Policy explains how Educonsellium (“we”, “us”, or “our”)
+          This Privacy Policy explains how Claude Martel (“we”, “us”, or “our”)
           collects, uses, and protects your information when you use the My Life
           and Adventures mobile application and related services (the “App”). The
           App lets you record, preserve, and share personal video life-stories
           with the people you choose.
-        </p>
-
-        <p className="legal-note">
-          Before you publish: replace the bracketed placeholders below (contact
-          email, legal entity, and mailing address) with your real details, then
-          host this file at a public URL and enter that URL in App Store Connect.
         </p>
 
         <section className="legal-section">
@@ -113,53 +107,7 @@ export function PrivacyPage() {
         </section>
 
         <section className="legal-section">
-          <h2>4. Service Providers We Use</h2>
-          <p>
-            We share limited information with trusted providers who process it on
-            our behalf:
-          </p>
-          <table className="legal-table">
-            <thead>
-              <tr>
-                <th>Provider</th>
-                <th>Purpose</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Supabase</td>
-                <td>Secure hosting of your account, content, and database</td>
-              </tr>
-              <tr>
-                <td>Apple (App Store)</td>
-                <td>App distribution and in-app subscription billing</td>
-              </tr>
-              <tr>
-                <td>RevenueCat</td>
-                <td>Managing and validating in-app subscriptions</td>
-              </tr>
-              <tr>
-                <td>Stripe</td>
-                <td>Processing one-time download payments</td>
-              </tr>
-              <tr>
-                <td>Expo</td>
-                <td>Delivering push notifications</td>
-              </tr>
-              <tr>
-                <td>Email delivery provider</td>
-                <td>Sending story links, sign-in codes, and notifications</td>
-              </tr>
-            </tbody>
-          </table>
-          <p>
-            These providers are authorized to use your information only as needed
-            to perform their services and are bound to protect it.
-          </p>
-        </section>
-
-        <section className="legal-section">
-          <h2>5. Payments</h2>
+          <h2>4. Payments</h2>
           <p>
             Subscriptions are billed through your Apple ID and handled by Apple in
             accordance with Apple’s terms. One-time downloads are processed by
@@ -169,7 +117,7 @@ export function PrivacyPage() {
         </section>
 
         <section className="legal-section">
-          <h2>6. Data Retention</h2>
+          <h2>5. Data Retention</h2>
           <p>
             We keep your information for as long as your account is active or as
             needed to provide the App. You may request deletion of your account
@@ -179,7 +127,7 @@ export function PrivacyPage() {
         </section>
 
         <section className="legal-section">
-          <h2>7. Your Rights</h2>
+          <h2>6. Your Rights</h2>
           <p>
             Depending on where you live, you may have the right to:
           </p>
@@ -197,7 +145,7 @@ export function PrivacyPage() {
         </section>
 
         <section className="legal-section">
-          <h2>8. Security</h2>
+          <h2>7. Security</h2>
           <p>
             We use administrative, technical, and physical safeguards to protect
             your information, including encryption in transit and access controls.
@@ -207,7 +155,7 @@ export function PrivacyPage() {
         </section>
 
         <section className="legal-section">
-          <h2>9. Children’s Privacy</h2>
+          <h2>8. Children’s Privacy</h2>
           <p>
             The App is not directed to children under 13, and we do not knowingly
             collect personal information from children under 13. If you believe a
@@ -216,7 +164,7 @@ export function PrivacyPage() {
         </section>
 
         <section className="legal-section">
-          <h2>10. International Users</h2>
+          <h2>9. International Users</h2>
           <p>
             Your information may be processed and stored in countries other than
             your own, which may have different data-protection laws. Where
@@ -226,7 +174,7 @@ export function PrivacyPage() {
         </section>
 
         <section className="legal-section">
-          <h2>11. Changes to This Policy</h2>
+          <h2>10. Changes to This Policy</h2>
           <p>
             We may update this Policy from time to time. We will revise the “Last
             updated” date above and, where appropriate, notify you within the App.
@@ -234,22 +182,22 @@ export function PrivacyPage() {
         </section>
 
         <section className="legal-section">
-          <h2>12. Contact Us</h2>
+          <h2>11. Contact Us</h2>
           <p>
             If you have questions about this Policy or your information, contact us
             at:
           </p>
           <p>
-            Educonsellium
+            Claude Martel
             <br />
             Email: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
             <br />
-            Address: [Your mailing address]
+            Address: 4915 Connaught, Montreal, Quebec, H4V 1X4
           </p>
         </section>
 
         <footer className="legal-footer">
-          <p>© 2026 Educonsellium. All rights reserved.</p>
+          <p>© 2026 Claude Martel. All rights reserved.</p>
         </footer>
       </div>
     </article>
