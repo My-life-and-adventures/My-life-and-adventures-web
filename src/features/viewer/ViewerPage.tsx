@@ -122,12 +122,18 @@ export function ViewerPage() {
   }
 
   if (state.kind === 'loading') {
-    return <p className="viewer-empty">Loading…</p>;
+    return (
+      <div className="viewer-loading" role="status" aria-live="polite">
+        <div className="viewer-spinner" aria-hidden="true" />
+        <p>Loading your stories…</p>
+      </div>
+    );
   }
 
   if (state.kind === 'error') {
     return (
       <div className="viewer-card">
+        <p className="viewer-eyebrow">Something went wrong</p>
         <h1>Unable to open stories</h1>
         <p className="viewer-error">{state.message}</p>
       </div>

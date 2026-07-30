@@ -11,6 +11,7 @@ export function PrivacyPage() {
   return (
     <article className="legal-page">
       <header className="legal-header">
+        <p className="viewer-eyebrow">Legal</p>
         <h1>Privacy Policy</h1>
         <p className="legal-updated">
           My Life and Adventures — Last updated: 3 July 2026

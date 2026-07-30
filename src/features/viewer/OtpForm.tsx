@@ -30,10 +30,12 @@ export function OtpForm({
   return (
     <>
       <div className="viewer-hero">
+        <p className="viewer-eyebrow">Sign-in code</p>
         <h1>Verify your email</h1>
         <p className="viewer-subtitle">
-          Hello {preview.full_name}, enter the 6-digit code we sent to{' '}
-          <strong>{preview.masked_email}</strong> to view stories from {preview.storyteller_name}.
+          Hello <strong>{preview.full_name}</strong>, enter the 6-digit code we sent to{' '}
+          <strong>{preview.masked_email}</strong> to view stories from{' '}
+          <strong>{preview.storyteller_name}</strong>.
         </p>
       </div>
       <div className="viewer-card">
@@ -41,7 +43,7 @@ export function OtpForm({
         {error ? <p className="viewer-error">{error}</p> : null}
         <form onSubmit={handleSubmit}>
           <input type="hidden" name="token" value={token} />
-          <label htmlFor="code">Sign-in code</label>
+          <label htmlFor="code">Your code</label>
           <input
             id="code"
             name="code"
@@ -53,18 +55,25 @@ export function OtpForm({
             required
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            aria-describedby="code-hint"
           />
+          <p id="code-hint" className="viewer-meta" style={{ marginTop: 10, marginBottom: 0 }}>
+            The code expires in 15 minutes.
+          </p>
           <div className="viewer-actions">
             <button type="submit" disabled={busy || code.length !== 6}>
               {busy ? 'Checking…' : 'Continue'}
             </button>
+            <button
+              type="button"
+              className="viewer-btn-secondary"
+              disabled={busy}
+              onClick={() => onResend()}
+            >
+              Resend code
+            </button>
           </div>
         </form>
-        <div className="viewer-actions" style={{ marginTop: 16 }}>
-          <button type="button" className="viewer-btn-secondary" disabled={busy} onClick={() => onResend()}>
-            Resend code
-          </button>
-        </div>
       </div>
     </>
   );

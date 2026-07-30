@@ -1,0 +1,96 @@
+/**
+ * Warm Modern theme — mirrors the mobile app's constants/theme.ts (T tokens).
+ * Keep hex values in sync when the app palette changes.
+ */
+:root {
+  --bg: #faf5ec;
+  --card-bg: #fffdf9;
+  --heading: #2e2014;
+  --body: #4a3220;
+  --muted: #6d533d;
+  --accent: #b5532a;
+  --accent-dark: #a8481f;
+  --on-accent: #fffdf9;
+  --chip-bg: #f1e6d0;
+  --back-bg: #f0e5cf;
+  --border: #efe3d2;
+  --border-subtle: rgba(181, 83, 42, 0.14);
+  --accent-soft: rgba(181, 83, 42, 0.1);
+  --error: #be3b3b;
+  --success: #6d533d;
+  --notice-bg: rgba(181, 83, 42, 0.1);
+  --error-bg: rgba(190, 59, 59, 0.08);
+  --shadow: 0 4px 14px rgba(106, 64, 35, 0.08);
+
+  --radius-card: 22px;
+  --radius-btn: 24px;
+  --radius-input: 16px;
+  --radius-icon: 18px;
+
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  --font-serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+
+  --fs-hero: 1.875rem; /* 30px — close to T.fsHero */
+  --fs-card: 1.25rem; /* 20px */
+  --fs-body: 1.0625rem; /* 17px */
+  --fs-meta: 0.9375rem; /* 15px */
+  --fs-caption: 0.8125rem; /* 13px */
+  --fs-btn: 1.125rem; /* 18px — near T.fsBtn */
+
+  --btn-height: 56px;
+  --input-height: 56px;
+  --touch: 48px;
+  --page-max: 720px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--body);
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(181, 83, 42, 0.08), transparent 55%),
+    radial-gradient(ellipse 80% 50% at 100% 100%, rgba(240, 229, 207, 0.7), transparent 45%),
+    var(--bg);
+  color-scheme: light;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--accent-dark);
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--heading);
+}

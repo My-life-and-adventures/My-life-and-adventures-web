@@ -1,6 +1,5 @@
 import type { ViewerStory } from '../../api/types';
 import { VideoPlayer } from './VideoPlayer';
-import './viewer.css';
 
 interface StoryCardProps {
   story: ViewerStory;

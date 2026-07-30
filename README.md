@@ -38,4 +38,9 @@ The Vite dev server proxies `/api` to `http://localhost:3000` (see `vite.config.
 ## Routes
 
 - `/viewer` — viewer sign-in and stories
+- `/privacy` — privacy policy
 - `/admin/*` — admin dashboard (placeholder)
+
+## Design
+
+UI follows the mobile app’s **Warm Modern** theme (`src/styles/theme.css`): cream background `#FAF5EC`, terracotta accent `#B5532A`, serif headings, rounded cards. Brand mark lives at `public/brand/logo.png`.

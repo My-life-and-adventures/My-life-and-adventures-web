@@ -1,116 +1,314 @@
-body {
-  font-family: system-ui, sans-serif;
-  margin: 0;
-  background: #f9fafb;
-  color: #111;
+/* Viewer + shared chrome — Warm Modern (matches mobile T tokens via theme.css) */
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-main {
-  max-width: 720px;
+  width: 100%;
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: 32px 16px 64px;
+  padding: 8px 20px 48px;
+  flex: 1;
 }
 
+/* ── Brand header ─────────────────────────────────────────────────────────── */
+
+.brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 20px 20px;
+  text-align: center;
+}
+
+.brand-header a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-icon);
+  object-fit: cover;
+  box-shadow: var(--shadow);
+  background: var(--card-bg);
+}
+
+.brand-wordmark {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--heading);
+  line-height: 1.2;
+}
+
+.brand-footer {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 8px 20px 36px;
+  text-align: center;
+  font-size: var(--fs-caption);
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.brand-footer a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.brand-footer a:hover {
+  color: var(--accent);
+}
+
+.brand-footer-sep {
+  margin: 0 0.45em;
+  color: var(--border);
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+
 .viewer-hero {
-  margin-bottom: 24px;
+  margin-bottom: 22px;
+  text-align: center;
 }
 
 .viewer-hero h1 {
+  margin: 0 0 10px;
+  font-family: var(--font-serif);
+  font-size: var(--fs-hero);
+  font-weight: 700;
+  color: var(--heading);
+  line-height: 1.2;
+}
+
+.viewer-eyebrow {
   margin: 0 0 8px;
-  font-size: 1.75rem;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .viewer-subtitle {
   margin: 0;
-  color: #6b7280;
-  line-height: 1.5;
+  color: var(--muted);
+  font-size: var(--fs-body);
+  line-height: 1.55;
 }
 
+.viewer-subtitle strong {
+  color: var(--heading);
+  font-weight: 700;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+
 .viewer-card {
-  background: #fff;
-  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
   padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
   margin-bottom: 16px;
 }
 
 .viewer-card h1,
 .viewer-card h2 {
   margin: 0 0 8px;
-  font-size: 1.125rem;
+  font-family: var(--font-serif);
+  font-size: var(--fs-card);
+  font-weight: 700;
+  color: var(--heading);
+  line-height: 1.3;
 }
 
 .viewer-card h1 {
-  font-size: 1.75rem;
+  font-size: var(--fs-hero);
 }
 
 .viewer-meta {
-  margin: 0 0 12px;
-  color: #6b7280;
-  font-size: 0.875rem;
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: var(--fs-meta);
+  line-height: 1.5;
 }
 
 .viewer-card video {
   width: 100%;
-  border-radius: 8px;
-  background: #000;
+  border-radius: 14px;
+  background: #2a1f18;
+  display: block;
 }
 
 .viewer-empty {
-  color: #6b7280;
-  font-style: italic;
+  color: var(--muted);
+  text-align: center;
+  padding: 24px 12px;
+  margin: 0;
+}
+
+.viewer-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 48px 16px;
+  color: var(--muted);
+}
+
+.viewer-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .viewer-notice {
   margin: 0 0 16px;
-  color: #047857;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--notice-bg);
+  color: var(--body);
+  font-size: var(--fs-meta);
+  line-height: 1.45;
 }
 
 .viewer-error {
   margin: 0 0 16px;
-  color: #b91c1c;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--error-bg);
+  color: var(--error);
+  font-size: var(--fs-meta);
+  line-height: 1.45;
 }
+
+/* ── Form ─────────────────────────────────────────────────────────────────── */
 
 .viewer-card label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: var(--fs-meta);
+  font-weight: 700;
+  color: var(--heading);
 }
 
 .viewer-card input[type='text'] {
   width: 100%;
-  box-sizing: border-box;
-  padding: 12px 14px;
-  font-size: 1.25rem;
-  letter-spacing: 4px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  height: var(--input-height);
+  padding: 0 18px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-align: center;
+  color: var(--heading);
+  background: var(--chip-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.viewer-card input[type='text']:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .viewer-actions {
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  flex-wrap: wrap;
   margin-top: 20px;
 }
 
-.viewer-actions button {
-  display: inline-block;
-  padding: 12px 20px;
-  border-radius: 8px;
+.viewer-actions button,
+.viewer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--btn-height);
+  padding: 0 24px;
+  border-radius: var(--radius-btn);
   border: none;
-  background: #4f46e5;
-  color: #fff;
-  font-weight: 600;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--fs-btn);
+  font-weight: 700;
   cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
 }
 
-.viewer-actions button:disabled {
-  opacity: 0.6;
+.viewer-actions button:hover:not(:disabled),
+.viewer-btn:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.viewer-actions button:active:not(:disabled),
+.viewer-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.viewer-actions button:disabled,
+.viewer-btn:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 .viewer-btn-secondary {
-  background: #e5e7eb !important;
-  color: #111 !important;
+  background: var(--card-bg) !important;
+  color: var(--accent-dark) !important;
+  border: 1.5px solid var(--accent) !important;
+}
+
+.viewer-chip {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  color: var(--body);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .app-main {
+    padding: 4px 16px 40px;
+  }
+
+  .brand-header {
+    padding: 22px 16px 16px;
+  }
+
+  .viewer-hero h1,
+  .viewer-card h1 {
+    font-size: 1.6rem;
+  }
+
+  .viewer-card {
+    padding: 20px;
+  }
 }
