@@ -1,6 +1,10 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 export function AppLayout() {
+  // The admin dashboard is tables and charts, not prose, so it opts out of the
+  // 720px reading column the viewer and legal pages are built around.
+  const wide = useLocation().pathname.startsWith('/admin');
+
   return (
     <div className="app-shell">
       <header className="brand-header">
@@ -16,7 +20,7 @@ export function AppLayout() {
         </Link>
       </header>
 
-      <main className="app-main">
+      <main className={wide ? 'app-main app-main-wide' : 'app-main'}>
         <Outlet />
       </main>
 
