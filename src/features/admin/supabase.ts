@@ -30,6 +30,29 @@ export const supabase: SupabaseClient | null = adminAuthConfigured
   : null;
 
 /**
+ * Where a magic link should land.
+ *
+ * Prefers an explicitly configured canonical origin over wherever this page
+ * happens to be served from. That matters for two cases `window.location.origin`
+ * gets wrong:
+ *
+ *  - Vercel preview deploys get a fresh random hostname per deploy, which can
+ *    never be on Supabase's redirect allowlist.
+ *  - Any origin that is not allowlisted is not rejected — Supabase quietly
+ *    substitutes the project's Site URL instead, so the link arrives pointing
+ *    somewhere unrelated and the cause is invisible from the app.
+ *
+ * Whatever this resolves to must be listed under Authentication → URL
+ * Configuration → Redirect URLs in the Supabase dashboard, or the fallback above
+ * applies.
+ */
+export function adminRedirectUrl(): string {
+  const configured = import.meta.env.VITE_PUBLIC_SITE_URL?.trim();
+  const origin = configured ? configured.replace(/\/+$/, '') : window.location.origin;
+  return `${origin}/admin`;
+}
+
+/**
  * Current access token, refreshed if it has expired. Read per request rather
  * than cached: a dashboard left open overnight would otherwise send a dead token
  * and look like a permissions failure.

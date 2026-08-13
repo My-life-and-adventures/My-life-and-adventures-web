@@ -102,7 +102,7 @@ export function AdminPage() {
       <header className="admin-header">
         <div>
           <p className="viewer-eyebrow">Admin</p>
-          <h1>Activity</h1>
+          <h1>Analytics</h1>
         </div>
         <div className="admin-header-actions">
           <span className="admin-muted">{verdict.email}</span>
@@ -124,7 +124,7 @@ export function AdminPage() {
             className={tab === 'overview' ? 'admin-tab admin-tab-on' : 'admin-tab'}
             onClick={() => setTab('overview')}
           >
-            Overview
+            Metrics
           </button>
           <button
             role="tab"
@@ -132,7 +132,7 @@ export function AdminPage() {
             className={tab === 'stream' ? 'admin-tab admin-tab-on' : 'admin-tab'}
             onClick={() => setTab('stream')}
           >
-            Event stream
+            app_events
           </button>
         </div>
 

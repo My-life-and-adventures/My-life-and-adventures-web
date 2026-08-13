@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { adminAuthConfigured, supabase } from './supabase';
+import { adminAuthConfigured, adminRedirectUrl, supabase } from './supabase';
 
 /**
  * Magic-link sign-in. No password field by design: the dashboard is used rarely
@@ -21,7 +21,7 @@ export function AdminLogin() {
     const { error: authError } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: {
-        emailRedirectTo: `${window.location.origin}/admin`,
+        emailRedirectTo: adminRedirectUrl(),
         // Admins are provisioned deliberately (ADMIN_EMAILS + a Supabase user),
         // so a link request must never quietly create an account.
         shouldCreateUser: false,
@@ -59,10 +59,22 @@ export function AdminLogin() {
       </div>
       <div className="viewer-card">
         {sent ? (
-          <p className="viewer-notice">
-            Check <strong>{email}</strong> for your sign-in link. It opens this page already
-            signed in.
-          </p>
+          <>
+            <p className="viewer-notice">
+              Check <strong>{email}</strong> for your sign-in link. It opens this page already
+              signed in.
+            </p>
+            {/* Stated explicitly because Supabase does not reject an
+                unallowlisted redirect — it silently substitutes the project's
+                Site URL, and the only symptom is a link landing somewhere
+                unexpected. Showing the intended destination turns that into a
+                one-second diagnosis. */}
+            <p className="admin-tile-hint">
+              The link should return you to <span className="admin-mono">{adminRedirectUrl()}</span>
+              . If it sends you somewhere else, that address is missing from the Supabase
+              redirect allowlist.
+            </p>
+          </>
         ) : (
           <form onSubmit={handleSubmit}>
             {error ? <p className="viewer-error">{error}</p> : null}
