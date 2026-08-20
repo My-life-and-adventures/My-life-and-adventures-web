@@ -33,7 +33,7 @@ const TIERS: { value: ResellerTier; label: string; commission: number; discount:
 
 const PLANS = ['base', 'advance', 'premium'];
 
-export function Promos() {
+export function Promos({ onChanged }: { onChanged?: () => void } = {}) {
   const [resellers, setResellers] = useState<Reseller[] | null>(null);
   const [promos, setPromos] = useState<Promo[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +56,10 @@ export function Promos() {
     };
   }, [reloadKey]);
 
-  const reload = () => setReloadKey((k) => k + 1);
+  const reload = () => {
+    setReloadKey((k) => k + 1);
+    onChanged?.();
+  };
 
   return (
     <div className="admin-stack">

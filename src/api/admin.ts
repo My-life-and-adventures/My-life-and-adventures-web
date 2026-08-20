@@ -125,3 +125,86 @@ export function createPromo(body: {
 }): Promise<CreatedPromo> {
   return adminFetch('/admin/promos', { method: 'POST', body: JSON.stringify(body) });
 }
+
+// ─── Redemptions, balances and payouts ────────────────────────────────────────
+
+export interface DashboardTotals {
+  redemptions: number;
+  reversed: number;
+  grossAttributed: number;
+  netAttributed: number;
+  commissionAccrued: number;
+  commissionUnpaid: number;
+  overLimit: number;
+}
+
+export interface ResellerBalance {
+  id: string;
+  name: string;
+  tier: ResellerTier;
+  is_active: boolean;
+  redemptions: number;
+  gross: number;
+  commission: number;
+  unpaid: number;
+  codes: number;
+}
+
+export interface RecentRedemption {
+  id: string;
+  created_at: string;
+  status: 'accrued' | 'reversed';
+  over_limit: boolean;
+  applies_to: string;
+  gross_amount: number;
+  net_amount: number;
+  commission_amount: number;
+  currency_code: string;
+  storyteller_id: string | null;
+  store_transaction_id: string | null;
+  code: string | null;
+  reseller: string | null;
+}
+
+export interface Payout {
+  id: string;
+  created_at: string;
+  status: 'draft' | 'approved' | 'paid' | 'void';
+  currency_code: string;
+  commission_due: number;
+  redemption_count: number;
+  paid_at: string | null;
+  reference: string | null;
+  reseller: string | null;
+}
+
+export interface PromoDashboard {
+  totals: DashboardTotals;
+  byReseller: ResellerBalance[];
+  recent: RecentRedemption[];
+  payouts: Payout[];
+  storeCutPct: number;
+}
+
+export function fetchPromoDashboard(): Promise<PromoDashboard> {
+  return adminFetch('/admin/promos/dashboard');
+}
+
+export function createPayout(resellerId: string, currency = 'CAD'): Promise<{
+  status: string;
+  payout_id: string;
+  commission_due: number;
+  redemption_count: number;
+}> {
+  return adminFetch('/admin/payouts', {
+    method: 'POST',
+    body: JSON.stringify({ resellerId, currency }),
+  });
+}
+
+export function markPayoutPaid(payoutId: string, reference?: string): Promise<Payout> {
+  return adminFetch(`/admin/payouts/${payoutId}/paid`, {
+    method: 'POST',
+    body: JSON.stringify({ reference }),
+  });
+}

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { fetchAdminMe } from '../../api/admin';
+import { fetchAdminMe, fetchPromoDashboard, type PromoDashboard } from '../../api/admin';
 import { AdminLogin } from './AdminLogin';
+import { Balances } from './Balances';
 import { Promos } from './Promos';
 import { adminAuthConfigured, supabase } from './supabase';
 import './admin.css';
@@ -29,6 +30,9 @@ export function AdminPage() {
     adminAuthConfigured ? undefined : null,
   );
   const [check, setCheck] = useState<AdminCheck | null>(null);
+  const [tab, setTab] = useState<'balances' | 'codes'>('balances');
+  const [dashboard, setDashboard] = useState<PromoDashboard | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!supabase) return;
@@ -57,6 +61,23 @@ export function AdminPage() {
       cancelled = true;
     };
   }, [userId]);
+
+  // Loaded once the allowlist check passes, and re-read whenever a payout moves
+  // money, so the owed figures can never lag the action that changed them.
+  useEffect(() => {
+    if (!check?.email) return;
+    let cancelled = false;
+    fetchPromoDashboard()
+      .then((d) => {
+        if (!cancelled) setDashboard(d);
+      })
+      .catch(() => {
+        if (!cancelled) setDashboard(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [check?.email, reloadKey]);
 
   if (!adminAuthConfigured || session === null) return <AdminLogin />;
 
@@ -100,7 +121,34 @@ export function AdminPage() {
         </div>
       </header>
 
-      <Promos />
+      <div className="admin-tabs" role="tablist">
+        <button
+          role="tab"
+          aria-selected={tab === 'balances'}
+          className={tab === 'balances' ? 'admin-tab admin-tab-on' : 'admin-tab'}
+          onClick={() => setTab('balances')}
+        >
+          Money
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === 'codes'}
+          className={tab === 'codes' ? 'admin-tab admin-tab-on' : 'admin-tab'}
+          onClick={() => setTab('codes')}
+        >
+          Codes &amp; resellers
+        </button>
+      </div>
+
+      {tab === 'balances' ? (
+        dashboard ? (
+          <Balances dashboard={dashboard} onChanged={() => setReloadKey((k) => k + 1)} />
+        ) : (
+          <p className="admin-muted">Loading…</p>
+        )
+      ) : (
+        <Promos onChanged={() => setReloadKey((k) => k + 1)} />
+      )}
     </div>
   );
 }
