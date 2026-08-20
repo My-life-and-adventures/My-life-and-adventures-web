@@ -2,7 +2,7 @@ import { apiFetch } from './client';
 import { getAdminToken } from '../features/admin/supabase';
 
 /**
- * Admin dashboard API — the read side of our first-party analytics.
+ * Admin dashboard API.
  *
  * Authenticates with the Supabase JWT of the signed-in admin, not the viewer
  * session token `apiFetch` reaches for by default. The backend checks that
@@ -10,129 +10,74 @@ import { getAdminToken } from '../features/admin/supabase';
  * here is trusted to gate itself.
  */
 
-export interface EventTotals {
-  events: number;
-  errors: number;
-  sessions: number;
-  storytellers: number;
-  /** Stories that actually reached a family — the number that matters. */
-  storiesCompleted: number;
-  recordingsStarted: number;
-  /** Distinct people, not incidents: twelve retries by one phone is one person. */
-  peopleAffectedByProblems: number;
-}
+export type ResellerTier = 'free' | 'a' | 'b';
 
-export interface FunnelStep {
+export interface Reseller {
+  id: string;
   name: string;
-  position: number;
-  sessions: number;
-  /** Same step over the immediately preceding window of equal length. */
-  previous_sessions: number;
+  email: string | null;
+  tier: ResellerTier;
+  payout_method: string | null;
+  is_active: boolean;
+  created_at: string;
 }
 
-export interface EventNameCount {
+export interface PromoEarnings {
+  gross: number;
+  net: number;
+  commission: number;
+  unpaid: number;
+}
+
+export interface Promo {
+  id: string;
   name: string;
-  kind: 'action' | 'error';
-  count: number;
-  storytellers: number;
-  last_at: string;
+  code: string;
+  reseller_id: string;
+  commission_pct: number;
+  user_discount_pct: number;
+  apple_offer_id: string | null;
+  is_free: boolean;
+  max_redemptions: number | null;
+  redeemed_count: number;
+  valid_until: string | null;
+  is_active: boolean;
+  created_at: string;
+  resellers: { name: string; tier: ResellerTier } | null;
+  earnings: PromoEarnings;
 }
 
-export interface ErrorGroup {
-  name: string;
-  message: string;
-  count: number;
-  storytellers: number;
-  last_at: string;
+export interface PricePoint {
+  id: string;
+  customerPrice: number;
+  discountPct: number;
 }
 
-/** An upload that died, described by the app's own stage/reason enums. */
-export interface UploadFailure {
-  reason: string;
-  stage: string;
-  count: number;
-  storytellers: number;
+export interface PricePointPreview {
+  plan: { name: string; label: string; listPrice: number; currency: string };
+  requestedDiscountPct: number;
+  nearest: PricePoint;
+  options: PricePoint[];
 }
 
-export interface Timings {
-  uploadMedianMs: number | null;
-  uploadP90Ms: number | null;
-  uploadSamples: number;
-  storyMedianSeconds: number | null;
-  storySamples: number;
-  medianBytes: number | null;
+export interface CreatedPromo {
+  promotionId: string;
+  code: string;
+  tier: ResellerTier;
+  appleOfferId: string | null;
+  effectiveDiscountPct: number | null;
+  customerPrice: number | null;
 }
 
-export interface VersionSplit {
-  platform: string;
-  app_version: string;
-  sessions: number;
-  errors: number;
-}
-
-export interface SeriesPoint {
-  bucket: string;
-  count: number;
-  errors: number;
-  completed: number;
-}
-
-export interface EventSummary {
-  since: string;
-  windowHours: number;
-  bucket: string;
-  totals: EventTotals;
-  /** The matched preceding window, so every headline can show a direction. */
-  previous: EventTotals;
-  funnel: FunnelStep[];
-  byName: EventNameCount[];
-  topErrors: ErrorGroup[];
-  uploadFailures: UploadFailure[];
-  timings: Timings;
-  versions: VersionSplit[];
-  series: SeriesPoint[];
-}
-
-export interface AppEvent {
-  id: number;
-  client_event_id: string;
-  occurred_at: string;
-  received_at: string;
-  kind: 'action' | 'error';
-  name: string;
-  level: 'info' | 'warning' | 'error';
-  storyteller_id: string | null;
-  session_id: string | null;
-  platform: string;
-  app_version: string | null;
-  props: Record<string, unknown>;
-  message: string | null;
-  stack: string | null;
-}
-
-export interface EventPage {
-  events: AppEvent[];
-  nextCursor: number | null;
-}
-
-export interface EventFilters {
-  windowHours: number;
-  kind?: 'action' | 'error';
-  name?: string;
-  level?: 'info' | 'warning' | 'error';
-  storytellerId?: string;
-  sessionId?: string;
-  platform?: string;
-  before?: number;
-  limit?: number;
-}
-
-async function adminFetch<T>(path: string): Promise<T> {
+async function adminFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = await getAdminToken();
   if (!token) {
     throw new Error('Not signed in');
   }
-  return apiFetch<T>(path, { headers: { Authorization: `Bearer ${token}` } });
+  return apiFetch<T>(path, {
+    ...init,
+    headers: { ...init.headers, Authorization: `Bearer ${token}` },
+  });
 }
 
 /** Confirms the signed-in account is on the allowlist before rendering anything. */
@@ -140,14 +85,43 @@ export function fetchAdminMe(): Promise<{ id: string; email: string; isAdmin: tr
   return adminFetch('/admin/me');
 }
 
-export function fetchEventSummary(windowHours: number): Promise<EventSummary> {
-  return adminFetch(`/admin/events/summary?windowHours=${windowHours}`);
+export function fetchResellers(): Promise<Reseller[]> {
+  return adminFetch('/admin/resellers');
 }
 
-export function fetchEvents(filters: EventFilters): Promise<EventPage> {
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(filters)) {
-    if (value !== undefined && value !== '') params.set(key, String(value));
-  }
-  return adminFetch(`/admin/events?${params.toString()}`);
+export function createReseller(body: {
+  name: string;
+  email?: string;
+  tier: ResellerTier;
+  payoutMethod?: string;
+  notes?: string;
+}): Promise<Reseller> {
+  return adminFetch('/admin/resellers', { method: 'POST', body: JSON.stringify(body) });
+}
+
+export function fetchPromos(includeInactive = false): Promise<Promo[]> {
+  return adminFetch(`/admin/promos?includeInactive=${includeInactive}`);
+}
+
+/** Read-only: what discounts Apple can actually apply, before committing. */
+export function fetchPricePoints(
+  planName: string,
+  targetDiscountPct: number,
+): Promise<PricePointPreview> {
+  return adminFetch(
+    `/admin/promos/price-points?planName=${planName}&targetDiscountPct=${targetDiscountPct}`,
+  );
+}
+
+export function createPromo(body: {
+  resellerId: string;
+  code: string;
+  name: string;
+  units: number;
+  planName: string;
+  commissionPct: number;
+  userDiscountPct: number;
+  expiresAt: string;
+}): Promise<CreatedPromo> {
+  return adminFetch('/admin/promos', { method: 'POST', body: JSON.stringify(body) });
 }

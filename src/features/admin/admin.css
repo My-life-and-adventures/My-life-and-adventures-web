@@ -1,7 +1,7 @@
 /**
- * Admin dashboard. Shares the Warm Modern tokens from theme.css, but breaks out
- * of the 720px reading column: this surface is tables and charts, and squeezing
- * an event stream into a column meant for prose makes it unreadable.
+ * Admin dashboard chrome. Shares the Warm Modern tokens from theme.css, but
+ * breaks out of the 720px reading column — admin surfaces are tables and
+ * controls, not prose.
  */
 
 /* Two classes deliberately: admin.css is pulled in via AdminPage, which Vite
@@ -37,47 +37,6 @@
   gap: 12px;
 }
 
-.admin-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.admin-toolbar-right {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.admin-tabs {
-  display: flex;
-  gap: 6px;
-  padding: 4px;
-  background: var(--chip-bg);
-  border-radius: var(--radius-btn);
-}
-
-.admin-tab {
-  min-height: var(--touch);
-  padding: 0 20px;
-  border: 0;
-  border-radius: var(--radius-btn);
-  background: transparent;
-  color: var(--muted);
-  font: inherit;
-  font-size: var(--fs-meta);
-  cursor: pointer;
-}
-
-.admin-tab-on {
-  background: var(--card-bg);
-  color: var(--heading);
-  box-shadow: var(--shadow);
-}
-
 .admin-btn-quiet {
   min-height: var(--touch);
   padding: 0 18px;
@@ -95,12 +54,6 @@
   color: var(--accent-dark);
 }
 
-.admin-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
 .admin-panel {
   padding: 20px;
   background: var(--card-bg);
@@ -116,24 +69,94 @@
   color: var(--heading);
 }
 
-.admin-panel-note {
-  margin: 6px 0 18px;
-}
-
 .admin-muted {
   color: var(--muted);
   font-size: var(--fs-meta);
 }
 
-/* ── Chart ────────────────────────────────────────────────────────────────── */
-
-.admin-chart {
-  display: block;
-  width: 100%;
-  height: 120px;
+@media (max-width: 640px) {
+  .admin-panel {
+    padding: 14px;
+  }
 }
 
-/* ── Tables ───────────────────────────────────────────────────────────────── */
+/* ── Promo codes ──────────────────────────────────────────────────────────── */
+
+.admin-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admin-panel-note {
+  margin: 6px 0 18px;
+}
+
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  align-items: end;
+}
+
+.admin-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--fs-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.admin-form input,
+.admin-form select {
+  min-height: var(--touch);
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--card-bg);
+  color: var(--body);
+  font: inherit;
+  font-size: var(--fs-meta);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Spans the grid so buttons sit on their own row rather than inline with a
+   field, which reads as "this applies to everything above". */
+.admin-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+}
+
+/* The deal in words, restated from the chosen tier so nobody has to remember
+   which percentage belongs to which reseller. */
+.admin-terms {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--fs-meta);
+  color: var(--body);
+}
+
+.admin-preview {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-input) var(--radius-input) 0;
+  background: var(--notice-bg);
+  font-size: var(--fs-meta);
+}
+
+.admin-preview p {
+  margin: 0 0 4px;
+}
+
+.admin-preview p:last-child {
+  margin-bottom: 0;
+}
 
 .admin-table {
   width: 100%;
@@ -170,237 +193,29 @@
   white-space: nowrap;
 }
 
-.admin-row-error td {
-  background: var(--error-bg);
+/* Spent or withdrawn codes stay visible but recede — they are history, not
+   options. */
+.admin-row-off {
+  opacity: 0.5;
 }
 
-.admin-wrap {
-  max-width: 420px;
-  word-break: break-word;
-}
-
-/* Buttons that read as links — used for drilling from a name into the stream. */
-.admin-linkish {
-  padding: 0;
-  margin-right: 10px;
-  border: 0;
-  background: none;
-  color: var(--accent-dark);
-  font: inherit;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-/* ── Filters + detail ─────────────────────────────────────────────────────── */
-
-.admin-filters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
-}
-
-.admin-filters label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: var(--fs-caption);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-}
-
-.admin-filters input,
-.admin-filters select,
-.admin-toolbar select {
-  min-height: var(--touch);
-  padding: 0 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  background: var(--card-bg);
-  color: var(--body);
-  font: inherit;
-  font-size: var(--fs-meta);
-  text-transform: none;
-  letter-spacing: normal;
-}
-
-.admin-actions {
-  display: flex;
-  justify-content: center;
-  margin-top: 16px;
-}@media (max-width: 640px) {
-  .admin-panel {
-    padding: 14px;
-  }
-
-  /* Tables don't reflow — let them scroll rather than squashing the columns. */
-  .admin-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-}
-
-/* A panel whose data is being replaced. Dimmed rather than blanked, so switching
-   the time window doesn't make the page jump while the next request lands. */
-.admin-stale {
-  opacity: 0.55;
-  transition: opacity 120ms ease-in;
-}
-
-/* ── Chart legend ─────────────────────────────────────────────────────────── */
-
-.admin-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
-  font-size: var(--fs-caption);
-  color: var(--muted);
-}
-
-.admin-legend li {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.admin-swatch {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-}
-
-.admin-swatch-faint {
-  background: rgba(181, 83, 42, 0.28);
-}
-
-.admin-swatch-accent {
-  background: var(--accent);
-}
-
-.admin-swatch-error {
-  background: var(--error);
-}
-
-.admin-details-summary {
-  cursor: pointer;
-  font-size: var(--fs-meta);
-  color: var(--muted);
-}
-
-.admin-details-summary:hover {
-  color: var(--accent-dark);
-}
-
-/* ── Technical / raw-data presentation ────────────────────────────────────── */
-
-.admin-mono {
+.admin-code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.8125rem;
-}
-
-/* Secondary values: previous-period figures, ids, units. Present, not loud. */
-.admin-dim {
-  color: var(--muted);
-  opacity: 0.85;
-}
-
-.admin-panel-head {
-  margin-bottom: 14px;
-}
-
-.admin-panel-head h2 {
-  margin: 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: var(--fs-body);
+  font-weight: 600;
   color: var(--heading);
 }
 
-.admin-panel-head .admin-panel-note {
-  margin: 4px 0 0;
+.admin-tier {
+  display: block;
   font-size: var(--fs-caption);
-  line-height: 1.5;
+  color: var(--muted);
 }
 
-/* Dense tables: this view is meant to be scanned, so rows are tight and every
-   numeric column is tabular so digits line up between rows. */
-.admin-table-dense th,
-.admin-table-dense td {
-  padding: 5px 10px;
-  font-size: 0.8125rem;
-  vertical-align: top;
-}
-
-.admin-table-dense tbody tr:hover {
+.admin-badge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
   background: var(--accent-soft);
-}
-
-.admin-table-dense .admin-num {
-  font-variant-numeric: tabular-nums;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  white-space: nowrap;
-}
-
-.admin-delta-up {
-  color: #2f6b43;
-}
-
-.admin-delta-down {
-  color: var(--error);
-}
-
-.admin-num-bad {
-  color: var(--error);
-}
-
-/* Message preview alongside an event name in the stream. Truncated rather than
-   wrapped so one long stack message cannot blow the row height apart. */
-.admin-inline-msg {
-  display: inline-block;
-  max-width: 34ch;
-  margin-left: 10px;
-  overflow: hidden;
-  color: var(--error);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  vertical-align: bottom;
-}
-
-.admin-raw {
-  margin: 0;
-  padding: 12px;
-  overflow-x: auto;
-  max-height: 480px;
-  overflow-y: auto;
-  background: var(--back-bg);
-  border-radius: var(--radius-input);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
-
-/* ── Chart chrome ─────────────────────────────────────────────────────────── */
-
-.admin-chart-frame {
-  position: relative;
-  border-left: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-/* Peak label, so the y-scale is readable without a full axis. */
-.admin-chart-peak {
-  position: absolute;
-  top: 0;
-  left: 4px;
-  font-size: var(--fs-caption);
-}
-
-.admin-chart-axis {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 4px;
+  color: var(--accent-dark);
   font-size: var(--fs-caption);
 }
