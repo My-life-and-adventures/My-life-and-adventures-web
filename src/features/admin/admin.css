@@ -158,6 +158,26 @@
   margin-bottom: 0;
 }
 
+.admin-price-warning {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--error);
+  border-radius: 0 var(--radius-input) var(--radius-input) 0;
+  background: var(--error-bg);
+}
+
+.admin-price-warning p {
+  margin: 0 0 8px;
+}
+
+.admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-meta);
+  cursor: pointer;
+}
+
 .admin-table {
   width: 100%;
   border-collapse: collapse;

@@ -215,6 +215,7 @@ function NewPromoForm({
   const [planName, setPlanName] = useState('base');
   const [expiresAt, setExpiresAt] = useState(defaultExpiry());
   const [preview, setPreview] = useState<PricePointPreview | null>(null);
+  const [confirmedDeviation, setConfirmedDeviation] = useState(false);
   const [checking, setChecking] = useState(false);
   const [busy, setBusy] = useState(false);
   const [created, setCreated] = useState<CreatedPromo | null>(null);
@@ -225,12 +226,21 @@ function NewPromoForm({
   const discountPct = terms?.discount ?? 0;
   const commissionPct = terms?.commission ?? 0;
 
+  // How far the real price point sits from what was asked for. Apple's catalog
+  // is fine-grained enough that a healthy fetch normally lands within a point
+  // or two of the target — a double-digit gap is the signature of something
+  // having gone wrong upstream (a stale/partial price-point fetch, the wrong
+  // territory, a plan mismatch) rather than "Apple just doesn't sell that".
+  const deviationPct = preview ? Math.abs(preview.nearest.discountPct - discountPct) : 0;
+  const deviatesFromTarget = preview != null && deviationPct > 10;
+
   /**
    * Only a discounting tier needs Apple. Checking first is the whole reason the
    * form has two steps: the offer is not something you want to create twice.
    */
   async function check() {
     setChecking(true);
+    setConfirmedDeviation(false);
     try {
       const result = await fetchPricePoints(planName, discountPct);
       setPreview(result);
@@ -307,6 +317,7 @@ function NewPromoForm({
             onChange={(e) => {
               setResellerId(e.target.value);
               setPreview(null);
+              setConfirmedDeviation(false);
             }}
             required
           >
@@ -346,6 +357,7 @@ function NewPromoForm({
             onChange={(e) => {
               setPlanName(e.target.value);
               setPreview(null);
+              setConfirmedDeviation(false);
             }}
           >
             {PLANS.map((p) => (
@@ -385,6 +397,32 @@ function NewPromoForm({
             <p className="admin-muted">
               Apple sells at fixed price points, so this is the real discount customers will get.
             </p>
+            {/* Apple's price-point catalogue runs to thousands of rows and a
+                fetch that missed most of them used to land "nearest" on
+                something wildly off target (5% requested, 64% actual, seen in
+                practice). The math from here on is correct, but a mistake this
+                expensive — selling a $69 plan for $25 for as long as the offer
+                runs — deserves a second, explicit step rather than one click
+                blending in with every ordinary case. */}
+            {deviatesFromTarget ? (
+              <div className="admin-price-warning">
+                <p>
+                  <strong>
+                    That is {Math.round(deviationPct)} points off the {discountPct}% you set
+                  </strong>{' '}
+                  — check this is really the price point you want before creating a real,
+                  un-cancellable offer.
+                </p>
+                <label className="admin-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={confirmedDeviation}
+                    onChange={(e) => setConfirmedDeviation(e.target.checked)}
+                  />
+                  I've checked the price and want to create this offer anyway
+                </label>
+              </div>
+            ) : null}
           </div>
         ) : null}
 
@@ -402,8 +440,17 @@ function NewPromoForm({
           <button
             type="submit"
             // A discounting code must be previewed first: creating the App Store
-            // offer is the irreversible half of this form.
-            disabled={busy || !reseller || code.trim().length < 4 || (discountPct > 0 && !preview)}
+            // offer is the irreversible half of this form. A preview that badly
+            // misses the target additionally needs the checkbox above — the
+            // preview alone was previously enough to submit even when it bore
+            // no resemblance to what was asked for.
+            disabled={
+              busy ||
+              !reseller ||
+              code.trim().length < 4 ||
+              (discountPct > 0 && !preview) ||
+              (deviatesFromTarget && !confirmedDeviation)
+            }
           >
             {busy ? 'Creating…' : 'Create code'}
           </button>
