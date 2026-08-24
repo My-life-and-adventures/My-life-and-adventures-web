@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { useToast } from '../../components/toast-context';
 import {
   createPromo,
   createReseller,
@@ -107,8 +108,22 @@ export function Promos({ onChanged }: { onChanged?: () => void } = {}) {
                     {p.max_redemptions ? ` / ${p.max_redemptions}` : ''}
                   </td>
                   <td className="admin-num">{p.commission_pct}%</td>
+                  {/* The discount is Apple's effective one, so the price beside
+                      it is what a buyer is actually charged — the two together
+                      are what the reseller's flyer can honestly claim. */}
                   <td className="admin-num">
-                    {p.is_free ? 'free' : p.user_discount_pct > 0 ? `${p.user_discount_pct}%` : '—'}
+                    {p.is_free ? (
+                      'free'
+                    ) : p.user_discount_pct > 0 ? (
+                      <>
+                        {Number(p.user_discount_pct).toFixed(1)}%
+                        {p.apple_customer_price != null ? (
+                          <span className="admin-tier">{money(p.apple_customer_price)}</span>
+                        ) : null}
+                      </>
+                    ) : (
+                      '—'
+                    )}
                   </td>
                   <td className="admin-num">{money(p.earnings.unpaid)}</td>
                   <td className="admin-nowrap">
@@ -129,19 +144,27 @@ function NewResellerForm({ onCreated }: { onCreated: () => void }) {
   const [email, setEmail] = useState('');
   const [tier, setTier] = useState<ResellerTier>('a');
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
-    setError(null);
+    const terms = TIERS.find((t) => t.value === tier);
     try {
       await createReseller({ name: name.trim(), email: email.trim() || undefined, tier });
+      toast.success(
+        `${name.trim()} added`,
+        terms
+          ? `${terms.label} — ${terms.commission}% commission${
+              terms.discount > 0 ? `, ${terms.discount}% buyer discount` : ''
+            }. Create a code for them below.`
+          : undefined,
+      );
       setName('');
       setEmail('');
       onCreated();
     } catch (err) {
-      setError((err as Error).message);
+      toast.error('Could not add reseller', (err as Error).message);
     } finally {
       setBusy(false);
     }
@@ -150,7 +173,6 @@ function NewResellerForm({ onCreated }: { onCreated: () => void }) {
   return (
     <section className="admin-panel">
       <h2>Add a reseller</h2>
-      {error ? <p className="viewer-error">{error}</p> : null}
       <form className="admin-form" onSubmit={submit}>
         <label>
           Name
@@ -195,8 +217,8 @@ function NewPromoForm({
   const [preview, setPreview] = useState<PricePointPreview | null>(null);
   const [checking, setChecking] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<CreatedPromo | null>(null);
+  const toast = useToast();
 
   const reseller = resellers.find((r) => r.id === resellerId);
   const terms = TIERS.find((t) => t.value === reseller?.tier);
@@ -209,11 +231,17 @@ function NewPromoForm({
    */
   async function check() {
     setChecking(true);
-    setError(null);
     try {
-      setPreview(await fetchPricePoints(planName, discountPct));
+      const result = await fetchPricePoints(planName, discountPct);
+      setPreview(result);
+      toast.info(
+        `Apple can discount to ${money(result.nearest.customerPrice)}`,
+        `That is ${result.nearest.discountPct.toFixed(1)}% off ${money(
+          result.plan.listPrice,
+        )} — the closest price point Apple offers to ${discountPct}%.`,
+      );
     } catch (err) {
-      setError((err as Error).message);
+      toast.error('Could not reach the App Store', (err as Error).message);
       setPreview(null);
     } finally {
       setChecking(false);
@@ -224,7 +252,6 @@ function NewPromoForm({
     e.preventDefault();
     if (!reseller) return;
     setBusy(true);
-    setError(null);
     try {
       const result = await createPromo({
         resellerId,
@@ -237,11 +264,17 @@ function NewPromoForm({
         expiresAt: new Date(expiresAt).toISOString(),
       });
       setCreated(result);
+      toast.success(
+        `${result.code} is live`,
+        result.appleOfferId
+          ? `Customers pay ${money(result.customerPrice ?? 0)} (${result.effectiveDiscountPct}% off). Give this code to ${reseller.name}.`
+          : `${units} ${units === 1 ? 'unit' : 'units'} on the ${planName} plan. Give this code to ${reseller.name}.`,
+      );
       setCode('');
       setPreview(null);
       onCreated();
     } catch (err) {
-      setError((err as Error).message);
+      toast.error('Could not create the code', (err as Error).message);
     } finally {
       setBusy(false);
     }
@@ -255,7 +288,6 @@ function NewPromoForm({
         check the price first, because the offer cannot be undone from here.
       </p>
 
-      {error ? <p className="viewer-error">{error}</p> : null}
       {created ? (
         <p className="viewer-notice">
           Created <strong>{created.code}</strong>

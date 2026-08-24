@@ -35,7 +35,10 @@ export interface Promo {
   code: string;
   reseller_id: string;
   commission_pct: number;
+  /** The discount Apple really applies — its nearest price point, not the one requested. */
   user_discount_pct: number;
+  /** What the buyer actually pays at that price point. Null when the code changes no price. */
+  apple_customer_price: number | null;
   apple_offer_id: string | null;
   is_free: boolean;
   max_redemptions: number | null;

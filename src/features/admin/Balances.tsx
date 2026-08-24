@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useToast } from '../../components/toast-context';
 import {
   createPayout,
   markPayoutPaid,
@@ -162,16 +163,21 @@ function ResellerRow({
   onChanged: () => void;
 }) {
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function pay() {
     setBusy(true);
-    setError(null);
     try {
-      await createPayout(reseller.id);
+      const result = await createPayout(reseller.id);
+      toast.success(
+        `Payout created for ${reseller.name}`,
+        `${money(result.commission_due)} across ${result.redemption_count} ${
+          result.redemption_count === 1 ? 'sale' : 'sales'
+        }. Mark it paid once the money has actually been sent.`,
+      );
       onChanged();
     } catch (e) {
-      setError((e as Error).message);
+      toast.error('Could not create payout', (e as Error).message);
     } finally {
       setBusy(false);
     }
@@ -196,7 +202,6 @@ function ResellerRow({
             {busy ? 'Working…' : 'Create payout'}
           </button>
         ) : null}
-        {error ? <div className="admin-inline-error">{error}</div> : null}
       </td>
     </tr>
   );
@@ -211,16 +216,19 @@ function PayoutRow({
 }) {
   const [busy, setBusy] = useState(false);
   const [reference, setReference] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function markPaid() {
     setBusy(true);
-    setError(null);
     try {
       await markPayoutPaid(payout.id, reference.trim() || undefined);
+      toast.success(
+        `Marked paid: ${money(payout.commission_due, payout.currency_code)}`,
+        `${payout.reseller ?? 'Reseller'} is settled up.`,
+      );
       onChanged();
     } catch (e) {
-      setError((e as Error).message);
+      toast.error('Could not mark as paid', (e as Error).message);
     } finally {
       setBusy(false);
     }
@@ -256,7 +264,6 @@ function PayoutRow({
             </button>
           </div>
         ) : null}
-        {error ? <div className="admin-inline-error">{error}</div> : null}
       </td>
     </tr>
   );

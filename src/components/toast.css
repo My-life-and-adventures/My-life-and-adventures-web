@@ -1,0 +1,137 @@
+/**
+ * Toasts. Bottom-right so they never cover the table row the reader just acted
+ * on, which is the usual complaint about top-centre placement in a dashboard.
+ */
+
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* The stack spans the viewport for layout, but only the toasts themselves
+     should ever intercept a click. */
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: min(380px, calc(100vw - 40px));
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-input);
+  background: var(--card-bg);
+  box-shadow: 0 8px 24px rgba(106, 64, 35, 0.16);
+  pointer-events: auto;
+  animation: toast-in 180ms ease-out;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Motion here is decoration, not information — the toast reads the same without it. */
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
+
+.toast-success {
+  border-left-color: #2f6b43;
+}
+
+.toast-error {
+  border-left-color: var(--error);
+}
+
+.toast-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.toast-success .toast-icon {
+  background: rgba(47, 107, 67, 0.14);
+  color: #2f6b43;
+}
+
+.toast-error .toast-icon {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.toast-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  margin: 0;
+  font-size: var(--fs-meta);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--heading);
+}
+
+.toast-detail {
+  margin: 3px 0 0;
+  font-size: var(--fs-caption);
+  line-height: 1.45;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.toast-close {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin: -3px -4px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.toast-close:hover {
+  background: var(--back-bg);
+  color: var(--heading);
+}
+
+@media (max-width: 640px) {
+  .toast-stack {
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .toast {
+    width: auto;
+  }
+}

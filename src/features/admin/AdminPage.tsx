@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { fetchAdminMe, fetchPromoDashboard, type PromoDashboard } from '../../api/admin';
+import { ToastProvider } from '../../components/ToastProvider';
 import { AdminLogin } from './AdminLogin';
 import { Balances } from './Balances';
 import { Promos } from './Promos';
@@ -103,52 +104,54 @@ export function AdminPage() {
   }
 
   return (
-    <div className="admin-page">
-      <header className="admin-header">
-        <div>
-          <p className="viewer-eyebrow">Admin</p>
-          <h1>Promo codes</h1>
-        </div>
-        <div className="admin-header-actions">
-          <span className="admin-muted">{verdict.email}</span>
+    <ToastProvider>
+      <div className="admin-page">
+        <header className="admin-header">
+          <div>
+            <p className="viewer-eyebrow">Admin</p>
+            <h1>Promo codes</h1>
+          </div>
+          <div className="admin-header-actions">
+            <span className="admin-muted">{verdict.email}</span>
+            <button
+              type="button"
+              className="admin-btn-quiet"
+              onClick={() => void supabase?.auth.signOut()}
+            >
+              Sign out
+            </button>
+          </div>
+        </header>
+
+        <div className="admin-tabs" role="tablist">
           <button
-            type="button"
-            className="admin-btn-quiet"
-            onClick={() => void supabase?.auth.signOut()}
+            role="tab"
+            aria-selected={tab === 'balances'}
+            className={tab === 'balances' ? 'admin-tab admin-tab-on' : 'admin-tab'}
+            onClick={() => setTab('balances')}
           >
-            Sign out
+            Money
+          </button>
+          <button
+            role="tab"
+            aria-selected={tab === 'codes'}
+            className={tab === 'codes' ? 'admin-tab admin-tab-on' : 'admin-tab'}
+            onClick={() => setTab('codes')}
+          >
+            Codes &amp; resellers
           </button>
         </div>
-      </header>
 
-      <div className="admin-tabs" role="tablist">
-        <button
-          role="tab"
-          aria-selected={tab === 'balances'}
-          className={tab === 'balances' ? 'admin-tab admin-tab-on' : 'admin-tab'}
-          onClick={() => setTab('balances')}
-        >
-          Money
-        </button>
-        <button
-          role="tab"
-          aria-selected={tab === 'codes'}
-          className={tab === 'codes' ? 'admin-tab admin-tab-on' : 'admin-tab'}
-          onClick={() => setTab('codes')}
-        >
-          Codes &amp; resellers
-        </button>
-      </div>
-
-      {tab === 'balances' ? (
-        dashboard ? (
-          <Balances dashboard={dashboard} onChanged={() => setReloadKey((k) => k + 1)} />
+        {tab === 'balances' ? (
+          dashboard ? (
+            <Balances dashboard={dashboard} onChanged={() => setReloadKey((k) => k + 1)} />
+          ) : (
+            <p className="admin-muted">Loading…</p>
+          )
         ) : (
-          <p className="admin-muted">Loading…</p>
-        )
-      ) : (
-        <Promos onChanged={() => setReloadKey((k) => k + 1)} />
-      )}
-    </div>
+          <Promos onChanged={() => setReloadKey((k) => k + 1)} />
+        )}
+      </div>
+    </ToastProvider>
   );
 }
