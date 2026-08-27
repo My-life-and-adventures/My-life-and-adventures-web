@@ -39,6 +39,7 @@ The Vite dev server proxies `/api` to `http://localhost:3000` (see `vite.config.
 
 - `/viewer` — viewer sign-in and stories
 - `/privacy` — privacy policy
+- `/support` — support page (App Store Support URL)
 - `/admin/*` — admin dashboard (placeholder)
 
 ## Design

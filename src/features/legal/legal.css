@@ -149,3 +149,42 @@
     font-size: 1.6rem;
   }
 }
+
+/* Support page — FAQ list */
+
+.legal-note p {
+  margin: 8px 0 0;
+}
+
+.legal-note p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-faq {
+  margin: 0;
+}
+
+.legal-faq dt {
+  margin-top: 20px;
+  font-weight: 700;
+  color: var(--heading);
+  line-height: 1.5;
+}
+
+.legal-faq div:first-child dt {
+  margin-top: 0;
+}
+
+.legal-faq dd {
+  margin: 6px 0 0;
+  line-height: 1.65;
+}
+
+.legal-faq a {
+  color: var(--accent-dark);
+  text-underline-offset: 2px;
+}
+
+.legal-faq a:hover {
+  color: var(--accent);
+}

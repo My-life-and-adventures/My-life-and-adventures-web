@@ -1,0 +1,33 @@
+[Unit]
+Description=Pull, build and restart mylife-web
+# The very first run after a boot would otherwise race DNS and fail its git fetch.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+
+# Runs as root so `systemctl restart` needs no sudo and no sudoers rule. The
+# script's only other privilege is writing inside APP_DIR.
+User=root
+
+Environment=APP_DIR=/srv/mylife-web
+Environment=BRANCH=main
+Environment=SERVICE=mylife-web
+
+# systemd gives a unit a minimal PATH that does NOT include /usr/local/bin,
+# where node and npm usually land — the script would fail with "npm: not found"
+# despite working fine in an interactive shell. If node came from nvm or fnm,
+# replace this with the directory holding that node binary (`which npm` on the
+# server tells you).
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+ExecStart=/usr/local/bin/mylife-web-deploy.sh
+
+# A build on a small VPS can take a while; killing it half-written is worse
+# than letting it finish, and the timer will not start a second run while this
+# one is still going.
+TimeoutStartSec=15min
+
+[Install]
+WantedBy=multi-user.target

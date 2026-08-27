@@ -25,9 +25,9 @@ export function AppLayout() {
       </main>
 
       <footer className="brand-footer">
-        <Link to="/privacy">Privacy Policy</Link>
+        <Link to="/support">Support</Link>
         <span className="brand-footer-sep">·</span>
-        <a href="mailto:support@mylife-and-adventures.com">Support</a>
+        <Link to="/privacy">Privacy Policy</Link>
         <br />
         © {new Date().getFullYear()} My Life and Adventures
       </footer>

@@ -1,0 +1,22 @@
+[Unit]
+Description=Check for mylife-web updates every 5 minutes
+
+[Timer]
+# Not immediately at boot: let the network and the app's own service settle
+# first, or the first run just fails on a git fetch.
+OnBootSec=2min
+
+# Five minutes after the last run finished. systemd will not start a second
+# run while one is still in progress, so a slow build delays the next check
+# rather than stacking two builds on top of each other.
+OnUnitActiveSec=5min
+
+# Lets systemd batch this with other timers to avoid waking the CPU on its own
+# schedule. Irrelevant for correctness at a 5-minute cadence.
+AccuracySec=30s
+
+# Run once on startup if the machine was off when a check was due.
+Persistent=true
+
+[Install]
+WantedBy=timers.target
