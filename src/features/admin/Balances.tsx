@@ -290,7 +290,7 @@ function Tile({
 }
 
 function tierName(tier: string): string {
-  if (tier === 'free') return 'Free / testers';
+  if (tier === 'free') return 'Free (App Store offer)';
   if (tier === 'a') return 'Reseller A';
   if (tier === 'b') return 'Reseller B';
   return tier;

@@ -54,6 +54,30 @@
   color: var(--accent-dark);
 }
 
+/* Destructive, so it reads differently from the quiet buttons — but compact,
+   because it sits on every row of the codes table. */
+.admin-btn-danger {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--error);
+  border-radius: var(--radius-btn);
+  background: var(--card-bg);
+  color: var(--error);
+  font: inherit;
+  font-size: var(--fs-caption);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.admin-btn-danger:hover:not(:disabled) {
+  background: var(--error-bg);
+}
+
+.admin-btn-danger:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .admin-panel {
   padding: 20px;
   background: var(--card-bg);

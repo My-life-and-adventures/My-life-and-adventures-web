@@ -129,6 +129,20 @@ export function createPromo(body: {
   return adminFetch('/admin/promos', { method: 'POST', body: JSON.stringify(body) });
 }
 
+/**
+ * What deleting a code actually did. A code that has been redeemed comes back
+ * `deactivated`: it is switched off but kept, because its redemptions are the
+ * commission ledger and deleting it would erase them.
+ */
+export type DeletedPromo =
+  | { status: 'deleted'; code: string }
+  | { status: 'deactivated'; code: string; redemptions: number };
+
+/** Deletes a code (switching off its App Store offer), or deactivates a used one. */
+export function deletePromo(id: string): Promise<DeletedPromo> {
+  return adminFetch(`/admin/promos/${id}`, { method: 'DELETE' });
+}
+
 // ─── Redemptions, balances and payouts ────────────────────────────────────────
 
 export interface DashboardTotals {

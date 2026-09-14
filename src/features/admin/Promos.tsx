@@ -3,6 +3,7 @@ import { useToast } from '../../components/toast-context';
 import {
   createPromo,
   createReseller,
+  deletePromo,
   fetchPricePoints,
   fetchPromos,
   fetchResellers,
@@ -17,17 +18,19 @@ import {
  * Reseller promo codes.
  *
  * Three tiers, all issued as blocks of codes:
- *   free — 0% commission, 0% discount, the code makes the app free
+ *   free — 0% commission, a free App Store offer: the plan free for a year,
+ *          then the regular price
  *   A    — 15% commission, buyer pays full price
  *   B    — 10% commission, buyer pays an Apple-discounted price
  *
- * Only tier B touches Apple. Its discount cannot be applied by us — the backend
+ * Free and B touch Apple. Neither can be applied by us — the backend
  * creates a real App Store offer code over the App Store Connect API, which is
  * why the form previews Apple's actual price points before submitting.
  */
 
 const TIERS: { value: ResellerTier; label: string; commission: number; discount: number }[] = [
-  { value: 'free', label: 'Free / testers', commission: 0, discount: 0 },
+  // A free App Store offer: the plan at no charge for a year, then the regular price.
+  { value: 'free', label: 'Free (App Store offer)', commission: 0, discount: 100 },
   { value: 'a', label: 'Reseller A', commission: 15, discount: 0 },
   { value: 'b', label: 'Reseller B', commission: 10, discount: 5 },
 ];
@@ -62,6 +65,46 @@ export function Promos({ onChanged }: { onChanged?: () => void } = {}) {
     onChanged?.();
   };
 
+  const toast = useToast();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  /**
+   * Deletes a code after saying plainly what that will do. A used code is
+   * switched off rather than deleted — its redemptions are the commission
+   * ledger — and the toast reports which of the two the server did.
+   */
+  async function remove(p: Promo) {
+    const used = p.redeemed_count > 0;
+    const lines = [
+      `Delete ${p.code}?`,
+      p.apple_offer_id
+        ? 'Its App Store offer will be switched off too (Apple does not allow deleting offers).'
+        : null,
+      used
+        ? `It has been used ${p.redeemed_count} ${p.redeemed_count === 1 ? 'time' : 'times'}, so it will be switched off instead of deleted, and its commission history kept.`
+        : 'This cannot be undone.',
+    ].filter(Boolean);
+    if (!window.confirm(lines.join('\n\n'))) return;
+
+    setDeletingId(p.id);
+    try {
+      const result = await deletePromo(p.id);
+      if (result.status === 'deleted') {
+        toast.success(`${result.code} deleted`, 'It can no longer be redeemed.');
+      } else {
+        toast.info(
+          `${result.code} switched off`,
+          `It has ${result.redemptions} ${result.redemptions === 1 ? 'redemption' : 'redemptions'}, so it was kept for its commission history. It can no longer be redeemed.`,
+        );
+      }
+      reload();
+    } catch (err) {
+      toast.error(`Could not delete ${p.code}`, (err as Error).message);
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   return (
     <div className="admin-stack">
       {error ? <p className="viewer-error">{error}</p> : null}
@@ -86,6 +129,7 @@ export function Promos({ onChanged }: { onChanged?: () => void } = {}) {
                 <th className="admin-num">Discount</th>
                 <th className="admin-num">Owed</th>
                 <th>Expires</th>
+                <th />
               </tr>
             </thead>
             <tbody>
@@ -128,6 +172,22 @@ export function Promos({ onChanged }: { onChanged?: () => void } = {}) {
                   <td className="admin-num">{money(p.earnings.unpaid)}</td>
                   <td className="admin-nowrap">
                     {p.valid_until ? new Date(p.valid_until).toLocaleDateString() : '—'}
+                  </td>
+                  <td className="admin-nowrap">
+                    {/* A used code that is already off has nothing left to remove:
+                        it is kept on purpose, for its commission history. */}
+                    {p.is_active || p.redeemed_count === 0 ? (
+                      <button
+                        type="button"
+                        className="admin-btn-danger"
+                        disabled={deletingId !== null}
+                        onClick={() => void remove(p)}
+                      >
+                        {deletingId === p.id ? 'Deleting…' : 'Delete'}
+                      </button>
+                    ) : (
+                      <span className="admin-muted">Switched off</span>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -225,6 +285,8 @@ function NewPromoForm({
   const terms = TIERS.find((t) => t.value === reseller?.tier);
   const discountPct = terms?.discount ?? 0;
   const commissionPct = terms?.commission ?? 0;
+  // Free codes are Apple offers with no price to check — only Tier B needs one.
+  const isFree = reseller?.tier === 'free';
 
   // How far the real price point sits from what was asked for. Apple's catalog
   // is fine-grained enough that a healthy fetch normally lands within a point
@@ -277,8 +339,10 @@ function NewPromoForm({
       toast.success(
         `${result.code} is live`,
         result.appleOfferId
-          ? `Customers pay ${money(result.customerPrice ?? 0)} (${result.effectiveDiscountPct}% off). Give this code to ${reseller.name}.`
-          : `${units} ${units === 1 ? 'unit' : 'units'} on the ${planName} plan. Give this code to ${reseller.name}.`,
+          ? result.tier === 'free'
+            ? `${planName} free for one year through the App Store, then the regular price. Give this code to ${reseller.name}.`
+            : `Customers pay ${money(result.customerPrice ?? 0)} (${result.effectiveDiscountPct}% off). Give this code to ${reseller.name}.`
+          : `${units} ${units === 1 ? 'unit' : 'units'} on the ${planName} plan, at full price. Give this code to ${reseller.name}.`,
       );
       setCode('');
       setPreview(null);
@@ -294,18 +358,20 @@ function NewPromoForm({
     <section className="admin-panel">
       <h2>Create a code</h2>
       <p className="admin-muted admin-panel-note">
-        Terms come from the reseller&apos;s tier. Tier B creates a real App Store offer code —
-        check the price first, because the offer cannot be undone from here.
+        Terms come from the reseller&apos;s tier. Tier B and Free both create a real App Store
+        offer code, which cannot be undone from here — for Tier B, check the price first.
       </p>
 
       {created ? (
         <p className="viewer-notice">
           Created <strong>{created.code}</strong>
           {created.appleOfferId
-            ? ` — App Store offer ${created.appleOfferId}, customers pay ${money(
-                created.customerPrice ?? 0,
-              )} (${created.effectiveDiscountPct}% off)`
-            : ' — no App Store offer needed for this tier'}
+            ? created.tier === 'free'
+              ? ` — App Store offer ${created.appleOfferId}, free for one year, then the regular price`
+              : ` — App Store offer ${created.appleOfferId}, customers pay ${money(
+                  created.customerPrice ?? 0,
+                )} (${created.effectiveDiscountPct}% off)`
+            : ' — no App Store offer: the buyer pays full price, and the reseller earns commission on it'}
         </p>
       ) : null}
 
@@ -380,8 +446,11 @@ function NewPromoForm({
         {reseller ? (
           <p className="admin-terms">
             {commissionPct}% commission to {reseller.name}
-            {discountPct > 0 ? `, ${discountPct}% discount to the buyer` : ', buyer pays full price'}
-            {reseller.tier === 'free' ? ' — this code makes the app free' : ''}
+            {isFree
+              ? ' — the buyer gets the plan free for a year through an App Store offer, then pays the regular price'
+              : discountPct > 0
+                ? `, ${discountPct}% discount to the buyer`
+                : ', buyer pays full price'}
           </p>
         ) : null}
 
@@ -427,7 +496,7 @@ function NewPromoForm({
         ) : null}
 
         <div className="admin-form-actions">
-          {discountPct > 0 ? (
+          {discountPct > 0 && !isFree ? (
             <button
               type="button"
               className="admin-btn-quiet"
@@ -448,7 +517,7 @@ function NewPromoForm({
               busy ||
               !reseller ||
               code.trim().length < 4 ||
-              (discountPct > 0 && !preview) ||
+              (discountPct > 0 && !isFree && !preview) ||
               (deviatesFromTarget && !confirmedDeviation)
             }
           >
