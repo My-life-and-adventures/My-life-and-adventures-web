@@ -272,6 +272,46 @@
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
+/* Password fields on the reset page. Plain text entry, unlike the spaced-out
+   one-time code input above. */
+.viewer-card input.viewer-password {
+  width: 100%;
+  height: var(--input-height);
+  padding: 0 16px;
+  font: inherit;
+  font-size: var(--fs-body);
+  color: var(--heading);
+  background: var(--chip-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.viewer-card input.viewer-password:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.viewer-card input.viewer-password[aria-invalid='true'] {
+  border-color: var(--error);
+}
+
+.viewer-field-hint,
+.viewer-field-error {
+  margin: 8px 0 18px;
+  font-size: var(--fs-caption);
+  line-height: 1.45;
+}
+
+.viewer-field-hint {
+  color: var(--muted);
+}
+
+.viewer-field-error {
+  color: var(--error);
+}
+
 .viewer-actions {
   display: flex;
   flex-direction: column;
