@@ -14,7 +14,7 @@ export function PrivacyPage() {
         <p className="viewer-eyebrow">Legal</p>
         <h1>Privacy Policy</h1>
         <p className="legal-updated">
-          My Life and Adventures — Last updated: 3 July 2026
+          My Life and Adventures — Last updated: 19 September 2026
         </p>
       </header>
 
@@ -110,10 +110,10 @@ export function PrivacyPage() {
         <section className="legal-section">
           <h2>4. Payments</h2>
           <p>
-            Subscriptions are billed through your Apple ID and handled by Apple in
-            accordance with Apple’s terms. One-time downloads are processed by
-            Stripe. Payment card details are entered with, and held by, those
-            payment processors — not by us.
+            All purchases — subscriptions and one-time downloads — are billed
+            through your Apple ID and handled by Apple in accordance with Apple’s
+            terms. Payment card details are entered with, and held by, Apple —
+            not by us.
           </p>
         </section>
 
