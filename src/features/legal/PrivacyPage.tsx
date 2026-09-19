@@ -192,8 +192,6 @@ export function PrivacyPage() {
             Claude Martel
             <br />
             Email: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-            <br />
-            Address: 4915 Connaught, Montreal, Quebec, H4V 1X4
           </p>
         </section>
 
