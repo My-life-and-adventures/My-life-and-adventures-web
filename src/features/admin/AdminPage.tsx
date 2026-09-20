@@ -5,6 +5,7 @@ import { ToastProvider } from '../../components/ToastProvider';
 import { AdminLogin } from './AdminLogin';
 import { Balances } from './Balances';
 import { Promos } from './Promos';
+import { Translations } from './Translations';
 import { adminAuthConfigured, supabase } from './supabase';
 import './admin.css';
 
@@ -31,7 +32,7 @@ export function AdminPage() {
     adminAuthConfigured ? undefined : null,
   );
   const [check, setCheck] = useState<AdminCheck | null>(null);
-  const [tab, setTab] = useState<'balances' | 'codes'>('balances');
+  const [tab, setTab] = useState<'balances' | 'codes' | 'translations'>('balances');
   const [dashboard, setDashboard] = useState<PromoDashboard | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -109,7 +110,7 @@ export function AdminPage() {
         <header className="admin-header">
           <div>
             <p className="viewer-eyebrow">Admin</p>
-            <h1>Promo codes</h1>
+            <h1>{tab === 'translations' ? 'Translations' : 'Promo codes'}</h1>
           </div>
           <div className="admin-header-actions">
             <span className="admin-muted">{verdict.email}</span>
@@ -140,9 +141,19 @@ export function AdminPage() {
           >
             Codes &amp; resellers
           </button>
+          <button
+            role="tab"
+            aria-selected={tab === 'translations'}
+            className={tab === 'translations' ? 'admin-tab admin-tab-on' : 'admin-tab'}
+            onClick={() => setTab('translations')}
+          >
+            Translations
+          </button>
         </div>
 
-        {tab === 'balances' ? (
+        {tab === 'translations' ? (
+          <Translations />
+        ) : tab === 'balances' ? (
           dashboard ? (
             <Balances dashboard={dashboard} onChanged={() => setReloadKey((k) => k + 1)} />
           ) : (

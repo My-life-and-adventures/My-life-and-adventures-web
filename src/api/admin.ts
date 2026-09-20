@@ -72,7 +72,7 @@ export interface CreatedPromo {
   customerPrice: number | null;
 }
 
-async function adminFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function adminFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = await getAdminToken();
   if (!token) {
     throw new Error('Not signed in');

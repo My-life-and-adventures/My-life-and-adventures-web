@@ -1,0 +1,382 @@
+/* Translations tab. Built on the tokens in styles/theme.css and the shared .admin-* classes,
+   so it inherits light/dark and the rest of the dashboard's spacing without restating it. */
+
+/* ── language picker ─────────────────────────────────────────────────────── */
+
+.tr-languages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.tr-lang {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--bg);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--body);
+}
+
+.tr-lang:hover {
+  border-color: var(--accent);
+}
+
+.tr-lang-on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.tr-lang-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--heading);
+}
+
+.tr-lang-meta {
+  font-size: var(--fs-caption);
+}
+
+.tr-pill {
+  font-size: var(--fs-caption);
+}
+
+.tr-add {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ── toolbar ─────────────────────────────────────────────────────────────── */
+
+.tr-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.tr-search {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.tr-count {
+  margin-left: auto;
+  font-size: var(--fs-caption);
+  white-space: nowrap;
+}
+
+/* ── grid ────────────────────────────────────────────────────────────────── */
+
+.tr-table {
+  table-layout: fixed;
+}
+
+.tr-table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.tr-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+
+.tr-col-key {
+  width: 26%;
+}
+
+.tr-col-text {
+  width: 37%;
+}
+
+/* The key column holds a long dotted path plus its chips; let it wrap anywhere rather than
+   force a horizontal scrollbar across the whole table. */
+.tr-col-key code {
+  overflow-wrap: anywhere;
+}
+
+.tr-reference {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.tr-missing td {
+  background: var(--notice-bg);
+}
+
+.tr-placeholder {
+  display: inline-block;
+  margin: 2px 0 0 6px;
+  padding: 1px 6px;
+  border-radius: var(--radius-icon);
+  background: var(--chip-bg);
+  color: var(--muted);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: var(--fs-caption);
+  white-space: nowrap;
+}
+
+.tr-input {
+  width: 100%;
+  min-height: calc(var(--input-height) - 8px);
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--bg);
+  color: var(--body);
+  font: inherit;
+  line-height: 1.45;
+  /* Grows with the text instead of scrolling a one-line box: several of these strings run
+     to a couple of sentences, and a translator has to see the whole thing. */
+  field-sizing: content;
+  resize: vertical;
+}
+
+.tr-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.tr-input-bad {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+
+/* ── save bar ────────────────────────────────────────────────────────────── */
+
+.tr-savebar {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+}
+
+/* ── publish dialog ──────────────────────────────────────────────────────── */
+
+.tr-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgb(0 0 0 / 45%);
+}
+
+.tr-dialog {
+  width: min(560px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.tr-dialog h2 {
+  margin-top: 0;
+}
+
+.tr-dialog label {
+  display: block;
+  margin: 16px 0 0;
+}
+
+.tr-dialog input {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.tr-result {
+  margin: 16px 0 0;
+  padding-left: 18px;
+  font-size: var(--fs-meta);
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  /* Below this the three columns are unusable, so the reference and the field stack. */
+  .tr-table,
+  .tr-table tbody,
+  .tr-table tr,
+  .tr-table td {
+    display: block;
+    width: auto;
+  }
+
+  .tr-table thead {
+    display: none;
+  }
+
+  .tr-table tr {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tr-table td {
+    border-bottom: 0;
+  }
+
+  .tr-count {
+    margin-left: 0;
+  }
+}
+
+/* .admin-form is an auto-fit grid, so a hint paragraph would otherwise be laid out as one
+   more field column beside the inputs. */
+.tr-add .admin-panel-note {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+/* ── pending-publish banner ──────────────────────────────────────────────── */
+
+.tr-pending {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 3px solid var(--accent);
+}
+
+.tr-pending p {
+  margin: 6px 0 0;
+  font-size: var(--fs-meta);
+  line-height: 1.5;
+  max-width: 62ch;
+}
+
+/* ── save bar ────────────────────────────────────────────────────────────── */
+
+.tr-savebar-count {
+  font-weight: 600;
+  color: var(--heading);
+}
+
+.tr-savebar-blocked {
+  font-weight: 400;
+  color: var(--error);
+}
+
+/* ── review dialog ───────────────────────────────────────────────────────── */
+
+.tr-dialog-wide {
+  width: min(760px, 100%);
+}
+
+.tr-review-group h3 {
+  margin: 20px 0 8px;
+  font-size: var(--fs-body);
+  color: var(--heading);
+}
+
+.tr-review-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tr-review-list li {
+  padding: 10px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.tr-review-head {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.tr-review-head code {
+  overflow-wrap: anywhere;
+}
+
+/* Before and after read as a pair: the old text struck through above the new one, so the
+   change is legible at a glance without a character-level diff. */
+.tr-review-before,
+.tr-review-after {
+  margin: 6px 0 0;
+  padding-left: 14px;
+  font-size: var(--fs-meta);
+  line-height: 1.45;
+  border-left: 2px solid var(--border);
+}
+
+.tr-review-before {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--border);
+}
+
+.tr-review-after {
+  color: var(--body);
+  border-left-color: var(--accent);
+}
+
+.tr-review-actions {
+  position: sticky;
+  bottom: 0;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  background: var(--card-bg);
+}
+
+/* ── build manifest inside the publish dialog ────────────────────────────── */
+
+.tr-manifest {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  font-size: var(--fs-meta);
+}
+
+.tr-manifest summary {
+  cursor: pointer;
+  color: var(--heading);
+}
+
+.tr-manifest-list {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.tr-manifest-list li {
+  padding: 4px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.tr-manifest-value {
+  display: block;
+  color: var(--muted);
+  line-height: 1.4;
+}
