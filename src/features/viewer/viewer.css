@@ -387,3 +387,26 @@
     padding: 20px;
   }
 }
+
+/* ── Welcome (no invite link, no session) ────────────────────────────────── */
+
+.viewer-welcome h1 {
+  margin-bottom: 12px;
+}
+
+.viewer-welcome .viewer-subtitle {
+  margin-bottom: 16px;
+}
+
+.viewer-welcome .viewer-meta {
+  margin-bottom: 8px;
+}
+
+.viewer-welcome .viewer-meta:last-child {
+  margin-bottom: 0;
+}
+
+.viewer-welcome a {
+  color: var(--accent);
+  font-weight: 600;
+}
